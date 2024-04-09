@@ -1,0 +1,11 @@
+core/
+.ipynb_checkpoints/
+venv
+*.zip
+*.bak
+.idea
+.env
+.DS_Store
+__pycache__
+*.pyc
+*.csv
