@@ -2,12 +2,14 @@ import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 import random
+
+
 def main():
     """
     Set up:
     Starting Balance: 1000 Qi coins
     Number of games: 1000
-    Game Results: List of floats: 1.0-100.0 from uniform draw
+    Game Results: List of floats: 0.0-100.0 from uniform draw
         0-60.0: no reward
         60.0-80.0: amount paid * 2
         80.0-90.0: amount paid * 3
@@ -22,44 +24,45 @@ def main():
 
     luck is normal (no luck buffs)
     """
-    # Amount paid is 100
+    # Amount paid is 100 ----------------------------------------------------------------------------
     startingBalance = 1000
     amountPaid = 100
-    numGames = 1000
+    numGames = 200
     mixed = 0
 
-    op_stop = optimal_stopping(startingBalance, mixed, numGames, amountPaid)
-    numPos = findBestCandidate(op_stop, numGames, startingBalance, mixed, amountPaid)
+    op_stop = optimal_stopping(startingBalance, mixed, numGames, "imgs/Optimal-Stop-AP100", amountPaid)
+    numPos = find_best_candidate(op_stop, numGames, startingBalance, mixed, amountPaid)
     print("Optimal Stop of", op_stop * 100, "% had an accuracy of", numPos, "%")
 
-    # Amount paid is 10
+    # Amount paid is 10 ----------------------------------------------------------------------------
     startingBalance = 1000
     amountPaid = 10
-    numGames = 1000
+    numGames = 200
     mixed = 0
 
-    op_stop = optimal_stopping(startingBalance, mixed, numGames, amountPaid)
-    numPos = findBestCandidate(op_stop, numGames, startingBalance, mixed, amountPaid)
+    op_stop = optimal_stopping(startingBalance, mixed, numGames, "imgs/Optimal-Stop-AP10", amountPaid)
+    numPos = find_best_candidate(op_stop, numGames, startingBalance, mixed, amountPaid)
     print("Optimal Stop of", op_stop * 100, "% had an accuracy of", numPos, "%")
 
-    # Amount paid is mixed
+    # Amount paid is mixed ----------------------------------------------------------------------------
     startingBalance = 1000
-    numGames = 1000
+    numGames = 200
     mixed = 1
 
-    op_stop = optimal_stopping(startingBalance, mixed, numGames)
-    numPos = findBestCandidate(op_stop, numGames, startingBalance, mixed)
+    op_stop = optimal_stopping(startingBalance, mixed, numGames, "imgs/Optimal-Stop-Mixed",)
+    numPos = find_best_candidate(op_stop, numGames, startingBalance, mixed)
     print("Optimal Stop of", op_stop * 100, "% had an accuracy of", numPos, "%")
 
 
-def optimal_stopping(startingBalance, mixed, numGames, amountPaid=0):
+def optimal_stopping(startingBalance, mixed, numGames, picName, amountPaid=0):
     solution_found_count = {}
     optimal_solution_found_count = {}
     for i in range(1, numGames):
         solution_found_count[str(i)] = 0
         optimal_solution_found_count[str(i)] = 0
     for experiment in range(1000):
-        print(experiment)
+        if experiment % 100 == 0:
+            print(experiment)
         list1 = [np.random.uniform(0, 100) for i in range(numGames)]
         list2 = list1.copy()
         if mixed == 0:
@@ -83,11 +86,12 @@ def optimal_stopping(startingBalance, mixed, numGames, amountPaid=0):
     print(optimal_solution_found_count)
     print(optimal_stop * 100, "%")
     plt.plot(x, y)
+    plt.savefig(picName)
     plt.show()
     return optimal_stop
 
 
-def findBestCandidate(opPercentage, length, startingBalance, mixed, amountPaid=0):
+def find_best_candidate(opPercentage, length, startingBalance, mixed, amountPaid=0):
     numPos = 0
     for i in range(100):
         resListOriginal = [np.random.uniform(0, 100) for i in range(length)]
