@@ -11,70 +11,6 @@ rock_distribution = {
 
 rock_values = {"Copper": 1, "Iron": 2, "Gold": 3}
 
-
-
-##VERSION #1
-def get_probabilities():
-    probs = []
-    for level, rocks in rock_distribution.items():
-        prob = sum(value for value in rocks.values() if value is not None)
-        probs.append(prob)
-    return probs
-
-def choose_action(actions, epsilon):
-    num_actions = len(actions)
-    p = np.random.random()
-    if p < epsilon:
-        j = np.random.choice(num_actions)
-    else:
-        j = np.argmax([a['runningMean'] for a in actions])
-    x = np.random.randn() + actions[j]['mean']
-    actions[j]['numTimesChosen'] += 1
-    actions[j]['runningMean'] = (1 - 1.0 / actions[j]['numTimesChosen']) * actions[j]['runningMean'] + 1.0 / actions[j]['numTimesChosen'] * x
-
-    return x
-
-def run_epsilon_greedy(epsilon, numOfSteps, probabilities, num_simulations):
-    cumulative_averages = np.zeros(numOfSteps)
-
-    for _ in range(num_simulations):
-        actions = [{'mean': prob, 'runningMean': 0, 'numTimesChosen': 0} for prob in probabilities]
-        data = np.empty(numOfSteps)
-
-        for i in range(numOfSteps):
-            x = choose_action(actions, epsilon)
-            data[i] = x
-
-        cumulative_averages += np.cumsum(data) / (np.arange(numOfSteps) + 1)
-
-    return cumulative_averages / num_simulations
-
-if __name__ == '__main__':
-    probabilities = get_probabilities()
-
-    epsilons = [0.01, 0.05, 0.1, 0.4]
-    num_simulations = 1
-
-    # Run epsilon greedy
-    for epsilon in epsilons:
-        result = run_epsilon_greedy(epsilon, 2000, probabilities, num_simulations)
-        plt.plot(result, label=f'Epsilon-Greedy (eps={epsilon})')
-
-    plt.legend()
-    plt.xlabel('Time Steps')
-    plt.ylabel('Average Reward')
-    plt.title('Epsilon-Greedy Convergence Rate')
-    plt.show()
-
-
-
-
-
-
-
-
-
-##VERSION #2
 def get_probabilities():
     probs = []
     for level, rocks in rock_distribution.items():
@@ -126,7 +62,6 @@ if __name__ == '__main__':
     epsilons = [0.01, 0.05, 0.1, 0.4]
     num_simulations = 1
 
-    # Run epsilon greedy
     for epsilon in epsilons:
         result = run_epsilon_greedy(epsilon, 2000, probabilities, num_simulations)
         plt.plot(result, label=f'Epsilon-Greedy (eps={epsilon})')
