@@ -9,7 +9,7 @@ each test will be shown and saved to the `/imgs` folder
 We want to find the optimal stopping point for playing the slot machines at the stardew
 valley casino. To perform this experiment, we needed the percent chances for each winning
 outcome and the percent chance of losing. We also needed the rewards for each outcome. The
-rewards are as follows: 
+rewards are as follows:
 
 ```
 No matching lines: 60% chance with no reward
