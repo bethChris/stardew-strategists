@@ -7,8 +7,9 @@ This project is a simulation of the farming cyles in the game Stardew Valley. It
 2. [Run Script](#run-script)
 3. [Menu Options](#menu-options)
 4. [Logic](#logic)
-5. [Selecting a Crop](#selecting-a-crop)
-6. [Code Structure](#code-structure)
+5. [Crop Meta Data](#crop-meta-data)
+6. [Selecting a Crop](#selecting-a-crop)
+7. [Code Structure](#code-structure)
 
 
 ## Set-up
@@ -55,16 +56,21 @@ The first 3 options will run the respective season, while the 4th option will ru
 The way this simulation works is as follows:
 1. Every day, the farm will "tend" to the field. 
 2. The tending action follows these steps:
-    - Harvest any plants ready to harvest, update money, clear harvested plants if applicable.
+    - Harvest any crops ready to harvest, update money, clear harvested crops if applicable.
     - Plant new crops if it's a day where the store is open. While money and room on the field is still available, [select a crop](#selecting-a-crop), puchase it and plant it.
-    - Water all plants. This action updates the growth on all plants in the field by 1. Once a plant has grown for the specific number of days it needs to grow, it will be ready to harvest.
+    - Water all crops. This action updates the growth on all crops in the field by 1. Once a crop has grown for the specific number of days it needs to grow, it will be ready to harvest.
 3. Increment the day count to progress to the next day.
 4. Increment total energy by 6, increasing the field size by 3. (Simulates natural game progression)
 5. Repeat steps 1-4 until the season is over (28 days for all seasons)
 6. If applicable, change out the season by clearing field and logging seasonal gains. Carry over money. Then repeat step 5.
 
+## Crop Meta Data
+All crop data was sourced from the [Stardew Valley Wiki](https://stardewvalleywiki.com/Crops). Only crops that could be obtained from Peirre's Shop year 1 were included. Pricing considered only the base quality crops, all crops have the same rate of luck to produce higher quality food so only the base quality was used to give a better lower bound estimation of total profits. 
+
+Some crops have a chance to harvest more than the base harvest rate, this was taken into account by adding the listed average for these specific crops to their harvest rate data. For example, potatos have an average of 0.25 extra potatos in a season due to chance, this was added to their base rate of 1 potato, giving it a final harvest rate of 1.25. 
+
 ## Selecting a Crop
-The scheduling part of this simulation comes from the way the algorithm chooses which plant to plant at any given time. First, all crops available in a season are filtered to just crops that we can afford at that timestep and that can have at least 1 harvest before the season is done. Then, during the planting phase of the tending logic, the Farm object will call on one of the selecting functions to choose a crop from these filtered crops based on various metrics. The choosing functions available are:
+The scheduling part of this simulation comes from the way the algorithm chooses which crop to plant at any given time. First, all crops available in a season are filtered to just crops that we can afford at that timestep and that can have at least 1 harvest before the season is done. Then, during the planting phase of the tending logic, the Farm object will call on one of the selecting functions to choose a crop from these filtered crops based on various metrics. The choosing functions available are:
 
 - get_most_profitable
 - get_smallest_grow_time
@@ -73,7 +79,7 @@ The scheduling part of this simulation comes from the way the algorithm chooses 
 - get_expensive
 - get_highest_seasonal_profit
 
-These can be swapped out in the `plant` method of the Farm class. Currently, the code is using the `get_highest_seasonal_profit` function, which selects the crop with the highest potential profit based on the current day in the season. The `get_most_profitable` is similar, but just compares raw buy and sell profit of each plant, with no reference to how far along in the season the simulation is. The rest of the functions are pretty self explanatory. 
+These can be swapped out in the `plant` method of the Farm class. Currently, the code is using the `get_highest_seasonal_profit` function, which selects the crop with the highest potential profit based on the current day in the season. The `get_most_profitable` is similar, but just compares raw buy and sell profit of each crop, with no reference to how far along in the season the simulation is. The rest of the functions are pretty self explanatory. 
 
 If you wish to swap these out and observe the behaviors of selecting a crop based on something other than hgihest seasonal profit, you can go into the `plant` method of the Farm class, comment out the "best boi" choice assignment and uncomment out one of the other options in the "OPTIONAL CHOICES" section:
 
@@ -88,7 +94,7 @@ The code structure is as follows:
 
 **season.py**: contains the Season class. This class keeps track of the crops and dates important to a season. Contains methods for checking if a date is a sellable or not sellable day. (Store is closed and/or there is a festival) 
 
-**crop.py**: contains the Crop class. This class keeps track of the meta data for each crop. This includes things like if it's a regrowable plant, the sell and buy prices, grow time, harvest rates, and current amount of grow days. Contains methods to have it increment it's growth and get the value of it's harvest.
+**crop.py**: contains the Crop class. This class keeps track of the meta data for each crop. This includes things like if it's a regrowable crop, the sell and buy prices, grow time, harvest rates, and current amount of grow days. Contains methods to have it increment it's growth and get the value of it's harvest.
 
 > The scheduler contains a Farm. A Farm contains a Season and a field of Crops. A Season contains Crops. A Crop contains meta data.
 
