@@ -44,25 +44,28 @@ fall_crops = {
 }
 
 # initial set up of seasons
-s_crops = []
-for crop in spring_crops:
-    s_crops.append(Crop(crop, **spring_crops[crop]))
 
-spring = Season("spring", s_crops, 100, [4,11,13,18,24,25])
+def setup():
+    s_crops = []
+    for crop in spring_crops:
+        s_crops.append(Crop(crop, **spring_crops[crop]))
 
-sum_crops = []
-for crop in summer_crops:
-    sum_crops.append(Crop(crop, **summer_crops[crop]))
+    spring = Season("spring", s_crops, 100, [4,11,13,18,24,25])
 
-summer = Season("summer", sum_crops, 100, [4,11,18,25,28])
+    sum_crops = []
+    for crop in summer_crops:
+        sum_crops.append(Crop(crop, **summer_crops[crop]))
 
-f_crops = []
-for crop in fall_crops:
-    f_crops.append(Crop(crop, **fall_crops[crop]))
+    summer = Season("summer", sum_crops, 100, [4,11,18,25,28])
 
-fall = Season("fall", f_crops, 100, [4,11,16,18,25,27])
+    f_crops = []
+    for crop in fall_crops:
+        f_crops.append(Crop(crop, **fall_crops[crop]))
 
-seasons = [spring, summer, fall]
+    fall = Season("fall", f_crops, 100, [4,11,16,18,25,27])
+
+
+    return spring, summer, fall
 
 
 # NOTES
@@ -108,6 +111,7 @@ def displayMenu(options, descrs, title="MENU"):
 # input: selection - integer representing the user's choice
 # output: none
 def driver(selection):
+    spring, summer, fall = setup()
     if selection == 1:
         farm = Farm(spring)
         farm.run_simulation()
